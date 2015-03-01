@@ -1,6 +1,6 @@
 local component = require("component")
 local unicode = require("unicode")
-local messages = require("messages")
+--local messages = require("messages-en")
 
 local filesystem, fileStream = {}, {}
 local isAutorunEnabled = nil
@@ -499,10 +499,11 @@ function filesystem.open(path, mode)
   assert(({r=true, rb=true, w=true, wb=true, a=true, ab=true})[mode],
     "bad argument #2 (r[b], w[b] or a[b] expected, got " .. mode .. ")")
 
-  local node, rest = findNode(path)
-  if not node.fs or not rest then
-    return nil, messages.ENOENT
-  end
+	local node, rest = findNode(path)
+	if not node.fs or not rest then
+		--return nil, messages.ENOENT
+		return nil, "No such file or directory"
+	end
 
   local handle, reason = node.fs.open(rest, mode)
   if not handle then
