@@ -1,5 +1,6 @@
 local component = require("component")
 local unicode = require("unicode")
+local messages = require("messages")
 
 local filesystem, fileStream = {}, {}
 local isAutorunEnabled = nil
@@ -500,7 +501,7 @@ function filesystem.open(path, mode)
 
   local node, rest = findNode(path)
   if not node.fs or not rest then
-    return nil, "file not found"
+    return nil, messages.ENOENT
   end
 
   local handle, reason = node.fs.open(rest, mode)

@@ -1,6 +1,7 @@
 local fs = require("filesystem")
 local text = require("text")
 local unicode = require("unicode")
+local messages = require("messages")
 
 local shell = {}
 local aliases = {}
@@ -139,7 +140,7 @@ function shell.resolve(path, ext)
     if where then
       return where
     else
-      return nil, "file not found"
+      return nil, messages.ENOENT
     end
   else
     if unicode.sub(path, 1, 1) == "/" then
