@@ -26,18 +26,18 @@ local filename = nil
 local url = text.trim(non_options[1])
 if options.O then
 	local i = 1
-	-- Not to scan the last arg
+	-- Don't scan the last arg
 	while i < #args do
 		if args[i] == "-O" then
 			filename = args[i + 1]
-			print("filename: " .. filename)
+			--print("filename: " .. filename)
 			break
 		end
 		i = i + 1
 	end
 	if not filename then
 		if not options.Q then
-			buffer.write(io.stderr, "wget: Option '-O' requires an argument")
+			buffer.write(io.stderr, "wget: Option '-O' requires an argument\n")
 		end
 		return nil, "Option '-O' requires an argument"
 	end
@@ -65,8 +65,8 @@ if fs.exists(filename) then
 	if not options.f or not os.remove(filename) then
 		if not options.Q then
 			buffer.write(io.stderr, "file already exists")
-	end
-	return nil, "file already exists" -- for programs using wget as a function
+		end
+		return nil, "file already exists" -- for programs using wget as a function
 	end
 end
 
@@ -79,43 +79,43 @@ if not f then
 end
 
 if not options.q then
-  io.write("Downloading... ")
+	io.write("Downloading... ")
 end
 local result, response = pcall(internet.request, url)
 if result then
-  local result, reason = pcall(function()
-    for chunk in response do
-      buffer.write(f, chunk)
-    end
-  end)
-  if not result then
-    if not options.q then
-      buffer.write(io.stderr, "failed.\n")
-    end
-    buffer.close(f)
-    fs.remove(filename)
-    if not options.Q then
-      buffer.write(io.stderr, "HTTP request failed: " .. reason .. "\n")
-    end
-    return nil, reason -- for programs using wget as a function
-  end
-  if not options.q then
-    io.write("success.\n")
-  end
+	local result, reason = pcall(function()
+		for chunk in response do
+			buffer.write(f, chunk)
+		end
+	end)
+	if not result then
+		if not options.q then
+			buffer.write(io.stderr, "failed.\n")
+		end
+		buffer.close(f)
+		fs.remove(filename)
+		if not options.Q then
+			buffer.write(io.stderr, "HTTP request failed: " .. reason .. "\n")
+		end
+		return nil, reason		-- for programs using wget as a function
+	end
+	if not options.q then
+		io.write("success.\n")
+	end
 
 	buffer.close(f)
-  if not options.q then
-    io.write("Saved data to " .. filename .. "\n")
-  end
+	if not options.q then
+		io.write("Saved data to " .. filename .. "\n")
+	end
 else
-  if not options.q then
-    io.write("failed.\n")
-  end
-  buffer.close(f)
-  fs.remove(filename)
-  if not options.Q then
-    buffer.write(io.stderr, "HTTP request failed: " .. response .. "\n")
-  end
-  return nil, response -- for programs using wget as a function
+	if not options.q then
+		io.write("failed.\n")
+	end
+	buffer.close(f)
+	fs.remove(filename)
+	if not options.Q then
+		buffer.write(io.stderr, "HTTP request failed: " .. response .. "\n")
+	end
+	return nil, response -- for programs using wget as a function
 end
 return true -- for programs using wget as a function

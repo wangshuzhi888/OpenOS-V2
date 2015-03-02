@@ -1,37 +1,38 @@
 local fs = require("filesystem")
 local shell = require("shell")
 local text = require("text")
+local buffer = require("buffer")
 
 local args, options = shell.parse(...)
 
 local function formatSize(size)
-  if not options.h then
-    return tostring(size)
-  end
-  local sizes = {"", "K", "M", "G"}
-  local unit = 1
-  local power = options.si and 1000 or 1024
-  while size > power and unit < #sizes do
-    unit = unit + 1
-    size = size / power
-  end
-  return math.floor(size * 10) / 10 .. sizes[unit]
+	if not options.h then
+		return tostring(size)
+	end
+	local sizes = options.si and {"", "K", "M", "G"} or { "", "Ki", "Mi", "Gi" }
+	local unit = 1
+	local power = options.si and 1000 or 1024
+	while size > power and unit < #sizes do
+		unit = unit + 1
+		size = size / power
+	end
+	return math.floor(size * 10) / 10 .. sizes[unit]
 end
 
 local mounts = {}
 if #args == 0 then
-  for proxy, path in fs.mounts() do
-    mounts[path] = proxy
-  end
+	for proxy, path in fs.mounts() do
+		mounts[path] = proxy
+	end
 else
-  for i = 1, #args do
-    local proxy, path = fs.get(args[i])
-    if not proxy then
-      io.stderr:write(args[i], ": no such file or directory\n")
-    else
-      mounts[path] = proxy
-    end
-  end
+	for i = 1, #args do
+		local proxy, path = fs.get(args[i])
+		if not proxy then
+			buffer.write(io.stderr, args[i], ": No such file or directory\n")
+		else
+			mounts[path] = proxy
+		end
+	end
 end
 
 local result = {{"Filesystem", "Used", "Available", "Use%", "Mounted on"}}
