@@ -110,19 +110,26 @@ function shell.resolveAlias(command, args)
 end
 
 function shell.getWorkingDirectory()
-  return os.getenv("PWD")
+	return os.getenv("PWD")
 end
 
 function shell.setWorkingDirectory(dir)
-  checkArg(1, dir, "string")
-  dir = fs.canonical(dir) .. "/"
-  if dir == "//" then dir = "/" end
-  if fs.isDirectory(dir) then
-    os.setenv("PWD", dir)
-    return true
-  else
-    return nil, "not a directory"
-  end
+	checkArg(1, dir, "string")
+	if unicode.sub(dir, 1, 1) == "~" then
+		local home = os.getenv("HOME")
+		if not home then
+			return false, "HOME not set"
+		end
+		dir = home .. unicode.sub(dir, 1)
+	end
+	dir = fs.canonical(dir) .. "/"
+	if dir == "//" then dir = "/" end
+	if fs.isDirectory(dir) then
+		os.setenv("PWD", dir)
+		return true
+	else
+		return nil, "Not a directory"
+	end
 end
 
 function shell.getPath()
