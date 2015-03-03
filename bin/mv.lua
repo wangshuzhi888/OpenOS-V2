@@ -14,7 +14,7 @@ local to = shell.resolve(args[#args])
 local todir = fs.isDirectory(to)
 
 if not todir and #args > 2 then
-	buffer.write(io.stderr, "mv: " .. messages.ENOTDIR)
+	buffer.write(io.stderr, "mv: " .. to .. ": " .. messages.ENOTDIR)
 	return
 end
 

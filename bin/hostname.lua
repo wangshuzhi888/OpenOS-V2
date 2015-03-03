@@ -3,6 +3,13 @@ local buffer = require("buffer")
 local args = { ... }
 if #args > 0 then
 	local hostname = nil
+	if args[1] == "-h" or args[1] == "--help" then
+		print("Usage:\n" ..
+			"	hostname [-f|-s]\n" ..
+			"	hostname {-F|--file} <file>\n" ..
+			"	hostname <hostname>\n")
+		return
+	end
 	if args[1] == "-F" or args[1] == "--file" then
 		if #args < 2 then
 			buffer.write(io.stderr, "hostname: Option '" .. args[1] .. "' requires an argument\n")

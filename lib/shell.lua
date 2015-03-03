@@ -120,7 +120,7 @@ function shell.setWorkingDirectory(dir)
 		if not home then
 			return false, "HOME not set"
 		end
-		dir = home .. unicode.sub(dir, 1)
+		dir = home .. unicode.sub(dir, 2)
 	end
 	dir = fs.canonical(dir) .. "/"
 	if dir == "//" then dir = "/" end

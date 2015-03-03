@@ -9,5 +9,5 @@ end
 
 local result, reason = shell.setWorkingDirectory(new_wd)
 if not result then
-	buffer.write(io.stderr, "cd: " .. reason)
+	buffer.write(io.stderr, new_wd .. ": " .. reason)
 end
