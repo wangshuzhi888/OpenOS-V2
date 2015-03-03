@@ -1,9 +1,10 @@
 do
-  _G._OSVERSION = "OpenOS 1.5"
+	_G._OSVERSION = "OpenOS 1.5"
 
-  local component = component
-  local computer = computer
-  local unicode = unicode
+	local component = component
+	local computer = computer
+	local unicode = unicode
+--	local buffer = buffer
 
   -- Runlevel information.
   local runlevel, shutdown = "S", computer.shutdown
@@ -35,35 +36,54 @@ do
     end
   end
 
-  -- Report boot progress if possible.
-  local gpu = component.list("gpu", true)()
-  local w, h
-  if gpu and screen then
-    component.invoke(gpu, "bind", screen)
-    w, h = component.invoke(gpu, "getResolution")
-    component.invoke(gpu, "setResolution", w, h)
-    component.invoke(gpu, "setBackground", 0x000000)
-    component.invoke(gpu, "setForeground", 0xFFFFFF)
-    component.invoke(gpu, "fill", 1, 1, w, h, " ")
-  end
-  local y = 1
-  local function status(msg)
-    if gpu and screen then
-      component.invoke(gpu, "set", 1, y, msg)
-      if y == h then
-        component.invoke(gpu, "copy", 1, 2, w, h - 1, 0, -1)
-        component.invoke(gpu, "fill", 1, h, w, 1, " ")
-      else
-        y = y + 1
-      end
-    end
-  end
+	-- Report boot progress if possible.
+	local gpu = component.list("gpu", true)()
+	local w, h
+	if gpu and screen then
+		component.invoke(gpu, "bind", screen)
+		w, h = component.invoke(gpu, "getResolution")
+		component.invoke(gpu, "setResolution", w, h)
+		component.invoke(gpu, "setBackground", 0x000000)
+		component.invoke(gpu, "setForeground", 0xFFFFFF)
+		component.invoke(gpu, "fill", 1, 1, w, h, " ")
+	end
+	local y = 1
+	local logfile = nil
+	local nolog = false
+	local buffer = nil
+	local function status(msg, log_to_file)
+		msg = string.format("[%8.2f] ", computer.uptime()) .. msg
+		if gpu and screen then
+			component.invoke(gpu, "set", 1, y, msg)
+			if y == h then
+				component.invoke(gpu, "copy", 1, 2, w, h - 1, 0, -1)
+				component.invoke(gpu, "fill", 1, h, w, 1, " ")
+			else
+				y = y + 1
+			end
+		end
+		if nolog or not log_to_file or not io then
+			return
+		end
+		if not buffer then
+			buffer = require("buffer")
+		end
+		if not logfile then
+			logfile = io.open("/var/log/dmesg", "wb")
+			if not logfile then
+				nolog = true
+				return
+			end
+		end
+		buffer.write(logfile, msg .. "\n")
+		buffer.flush(logfile)
+	end
 
-  status("Booting " .. _OSVERSION .. "...")
+	status("Booting " .. _OSVERSION .. "...")
 
   -- Custom low-level loadfile/dofile implementation reading from our ROM.
-  local function loadfile(file)
-    status("> " .. file)
+  local function loadfile(file, log_to_file)
+    status("> " .. file, log_to_file)
     local handle, reason = rom.open(file)
     if not handle then
       error(reason)
@@ -81,7 +101,7 @@ do
   end
 
   local function dofile(file)
-    local program, reason = loadfile(file)
+    local program, reason = loadfile(file, true)
     if program then
       local result = table.pack(pcall(program))
       if result[1] then
@@ -128,7 +148,7 @@ do
   local filesystem = require("filesystem")
   filesystem.mount(computer.getBootAddress(), "/")
 
-  status("Running boot scripts...")
+  status("Running boot scripts...", true)
 
   -- Run library startup scripts. These mostly initialize event handlers.
   local scripts = {}
@@ -143,7 +163,7 @@ do
     dofile(scripts[i])
   end
 
-  status("Initializing components...")
+  status("Initializing components...", true)
 
   local primaries = {}
   for c, t in component.list() do
@@ -159,7 +179,7 @@ do
   os.sleep(0.5) -- Allow signal processing by libraries.
   computer.pushSignal("init") -- so libs know components are initialized.
 
-  status("Initializing system...")
+  status("Initializing system...", true)
   require("term").clear()
   os.sleep(0.1) -- Allow init processing.
   runlevel = 1
