@@ -3,3 +3,4 @@
 *.swp
 .directory
 .DS_Store
+etc/hostname

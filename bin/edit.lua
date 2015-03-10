@@ -6,15 +6,17 @@ local shell = require("shell")
 local term = require("term")
 local text = require("text")
 local unicode = require("unicode")
+local buffer = require("buffer")
+local messages = require("messages")
 
 if not term.isAvailable() then
-  return
+	return
 end
 
 local args, options = shell.parse(...)
 if #args == 0 then
-  io.write("Usage: edit <filename>")
-  return
+	io.write("Usage: edit <filename>")
+	return
 end
 
 local filename = shell.resolve(args[1])
@@ -22,13 +24,15 @@ local filename = shell.resolve(args[1])
 local readonly = options.r or fs.get(filename) == nil or fs.get(filename).isReadOnly()
 
 if not fs.exists(filename) then
-  if fs.isDirectory(filename) then
-    io.stderr:write("file is a directory")
-    return
-  elseif readonly then
-    io.stderr:write("file system is read only")
-    return
-  end
+	if fs.isDirectory(filename) then
+		--io.stderr:write("file is a directory")
+		buffer.write(io.stderr, "edit: " .. messages.EISDIR .. "\n")
+		return
+	elseif readonly then
+		--io.stderr:write("file system is read only")
+		buffer.write(io.stderr, "edit: " .. messages.EROFS .. "\n")
+		return
+	end
 end
 
 local function loadConfig()

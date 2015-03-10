@@ -4,6 +4,12 @@ local shell = require("shell")
 local text = require('text')
 
 local dirs, options = shell.parse(...)
+
+if options.h then
+	print("Usage: ls [-alpM] [<directory> [...]]")
+	return
+end
+
 if #dirs == 0 then
   table.insert(dirs, ".")
 end
