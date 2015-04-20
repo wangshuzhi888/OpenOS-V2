@@ -2,8 +2,10 @@ local shell = require("shell")
 local buffer = require("buffer")
 
 local args = shell.parse(...)
-local new_wd = args[1]
-if not new_wd then
+local new_wd
+if args[1] then
+	new_wd = shell.resolve(args[1])
+else
 	new_wd = "~"
 end
 

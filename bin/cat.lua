@@ -1,5 +1,6 @@
 local buffer = require("buffer")
 local shell = require("shell")
+local messages = require("msg").get_messages()
 
 local args = shell.parse(...)
 if #args == 0 then

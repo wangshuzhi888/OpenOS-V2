@@ -1,7 +1,8 @@
 local fs = require("filesystem")
 local shell = require("shell")
 local buffer = require("buffer")
-local messages = require("messages")
+--local messages = require("messages")
+local messages = require("msg").get_messages()
 
 local args, options = shell.parse(...)
 if #args < 2 then

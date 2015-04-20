@@ -1,7 +1,8 @@
 local fs = require("filesystem")
 local text = require("text")
 local unicode = require("unicode")
-local messages = require("messages")
+--local messages = require("messages")
+local messages = require("msg").get_messages()
 
 local shell = {}
 local aliases = {}
@@ -122,13 +123,22 @@ function shell.setWorkingDirectory(dir)
 		end
 		dir = home .. unicode.sub(dir, 2)
 	end
-	dir = fs.canonical(dir) .. "/"
+	dir = fs.canonical(dir)
 	if dir == "//" then dir = "/" end
+	if not fs.exists(dir) then
+		return false, messages.ENOENT
+	end
+	local len = unicode.len(dir)
+	if dir == "" then
+		dir = "/"
+	elseif dir ~= "/" and unicode.sub(dir, len, len) == "/" then
+		dir = unicode.sub(dir, 1, len - 1)
+	end
 	if fs.isDirectory(dir) then
 		os.setenv("PWD", dir)
 		return true
 	else
-		return nil, "Not a directory"
+		return false, "Not a directory"
 	end
 end
 

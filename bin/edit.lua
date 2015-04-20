@@ -7,7 +7,7 @@ local term = require("term")
 local text = require("text")
 local unicode = require("unicode")
 local buffer = require("buffer")
-local messages = require("messages")
+local messages = require("msg").get_messages()
 
 if not term.isAvailable() then
 	return

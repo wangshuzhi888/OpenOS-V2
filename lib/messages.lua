@@ -1,6 +1,6 @@
 if os.getenv then
 	local language = os.getenv("LANGUAGE")
-	--print("language = " .. language)
+	print("language = " .. language)
 	if language then
 		local filename = "messages-" .. language
 		if require("filesystem").exists("/lib/" .. filename .. ".lua") then

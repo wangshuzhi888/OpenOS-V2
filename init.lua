@@ -201,13 +201,17 @@ local function motd()
 end
 
 while true do
-  motd()
-  local result, reason = os.execute(os.getenv("SHELL"))
-  if not result then
-    io.stderr:write((tostring(reason) or "unknown error") .. "\n")
-    print("Press any key to continue.")
-    os.sleep(0.5)
-    require("event").pull("key")
-  end
-  require("term").clear()
+	local home = os.getenv("HOME")
+	if home then
+		os.setenv("PWD", home)
+	end
+	motd()
+	local result, reason = os.execute(os.getenv("SHELL"))
+	if not result then
+		buffer.write(io.stderr, (tostring(reason) or "unknown error") .. "\n")
+		print("Press any key to continue.")
+		os.sleep(0.5)
+		require("event").pull("key")
+	end
+	require("term").clear()
 end
