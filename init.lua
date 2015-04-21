@@ -180,6 +180,22 @@ do
   computer.pushSignal("init") -- so libs know components are initialized.
 
   status("Initializing system...", true)
+
+	local f = io.open("/etc/environment")
+	if f then
+		local buffer = require("buffer")
+		repeat
+			local line = buffer.read(f, "*L")
+			if not line then
+				break
+			end
+			local start = string.find(line, "=")
+			local stop = string.find(line, "\n")
+			os.setenv(string.sub(line, 1, start - 1), unicode.sub(line, start + 1, stop - 1))
+		until not line
+		buffer.close(f)
+	end
+
   require("term").clear()
   os.sleep(0.1) -- Allow init processing.
   runlevel = 1
