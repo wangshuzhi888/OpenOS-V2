@@ -191,7 +191,10 @@ do
 			end
 			local start = string.find(line, "=")
 			local stop = string.find(line, "\n")
-			os.setenv(string.sub(line, 1, start - 1), unicode.sub(line, start + 1, stop - 1))
+			if not stop then
+				stop = string.len(line)
+			end
+			os.setenv(string.sub(line, 1, start - 1), string.sub(line, start + 1, stop - 1))
 		until not line
 		buffer.close(f)
 	end
@@ -215,6 +218,8 @@ local function motd()
     f:close()
   end
 end
+
+local buffer = require("buffer")
 
 while true do
 	local home = os.getenv("HOME")
