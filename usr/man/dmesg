@@ -1,5 +1,5 @@
 NAME
-  dmesg - display messages(events)
+  dmesg - display boot log and messages (events)
     
 SYNOPIS
   dmesg

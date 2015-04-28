@@ -3,7 +3,7 @@ local shell = require("shell")
 
 local args = shell.parse(...)
 if #args == 0 then
-	io.write("Usage: which <program> [...]")
+	io.write("Usage: which <program> [...]\n")
 	return
 end
 
@@ -17,6 +17,5 @@ for i = 1, #args do
 	if result then
 		io.write(result .. "\n")
 --	else
---		buffer.write(io.stderr, args[i] .. ": " .. reason .. "\n")
 	end
 end

@@ -153,7 +153,7 @@ if #args >= 1 then
           if lineNumber then lineNumber = 1 end
         else
           fileError(file)
-          return false, "file not found"
+          return nil, messages.ENOENT
         end
       end
       local line = curHand:read("*l")
@@ -163,7 +163,7 @@ if #args >= 1 then
         if #files < 1 then
           return nil
         else
-          return false, "end of file"
+          return nil, "end of file"
         end
       else
         return line, curFile
