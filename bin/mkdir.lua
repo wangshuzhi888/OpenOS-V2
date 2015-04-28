@@ -1,5 +1,7 @@
 local fs = require("filesystem")
 local shell = require("shell")
+local buffer = require("buffer")
+local messages = require("msg").get_messages()
 
 local args = shell.parse(...)
 if #args == 0 then
@@ -13,11 +15,11 @@ for i = 1, #args do
   if not result then
     if not reason then
       if fs.exists(path) then
-        reason = "file or folder with that name already exists"
+        reason = messages.EEXIST
       else
-        reason = "unknown reason"
+        reason = "Unknown error"
       end
     end
-    io.stderr:write(path .. ": " .. reason .. "\n")
+    buffer.write(io.stderr, path .. ": " .. reason .. "\n")
   end
 end

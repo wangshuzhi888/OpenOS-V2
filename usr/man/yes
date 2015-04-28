@@ -3,7 +3,6 @@ NAME
 
 SYNOPSIS
   yes [string]...
-  yes {-V|-h}
 
 DESCRIPTION
   Prints strings in command line arguments, if there is none, prints 'y'.
