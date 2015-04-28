@@ -1,4 +1,5 @@
 local shell = require("shell")
+local buffer = require("buffer")
 
 shell.setAlias("dir", "ls")
 shell.setAlias("list", "ls")
@@ -16,10 +17,10 @@ shell.setAlias("?", "man")
 shell.setAlias("cp", "cp -i")
 
 require("event").listen("init", function()
-  local file = io.open("/etc/hostname")
-  if file then
-    os.setenv("HOSTNAME", file:read("*l"))
-    os.setenv("PS1", "$HOSTNAME:$PWD# ")
-    file:close()
-  end
+	local file = io.open("/etc/hostname")
+	if file then
+		os.setenv("HOSTNAME", file:read("*l"))
+		--os.setenv("PS1", "$HOSTNAME:$PWD# ")
+		buffer.close(file)
+	end
 end)

@@ -9,9 +9,37 @@ local text = require("text")
 local unicode = require("unicode")
 
 local function expand(value)
-  local result = value:gsub("%$(%w+)", os.getenv):gsub("%$%b{}",
-    function(match) return os.getenv(expand(match:sub(3, -2))) or match end)
-  return result
+	local result = value:gsub("%$(%w+)", os.getenv):gsub("%$%b{}",
+		function(match) return os.getenv(expand(match:sub(3, -2))) or match end):gsub("%\\%w", function(c)
+--	local i = 1
+--	repeat
+--		i = string.find(result, "\\", i, true)
+--		if not i then
+--			break
+--		end
+--		i = i + 1
+--		if string.sub(result, i, i) == "w" then
+		--	print(c)
+			if c == "\\w" then
+		--		print("OK")
+				local wd = shell.getWorkingDirectory()
+				local home = os.getenv("HOME")
+				if home and wd == home then
+					return "~"
+				end
+
+				return wd
+			else
+				return c
+			end
+		end)
+--			local part = string.sub(result, 1, i - 2) .. wd
+--			local newi = string.len(part)
+--			result = part .. string.sub(result, i + 1)
+--			i = newi
+--		end
+--	until not i
+	return result
 end
 
 local function glob(value)

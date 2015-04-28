@@ -5,3 +5,4 @@
 .DS_Store
 etc/environment
 etc/hostname
+usr/local

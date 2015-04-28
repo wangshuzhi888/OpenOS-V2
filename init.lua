@@ -192,7 +192,7 @@ do
 			local start = string.find(line, "=")
 			local stop = string.find(line, "\n")
 			if not stop then
-				stop = string.len(line)
+				stop = string.len(line) + 1
 			end
 			os.setenv(string.sub(line, 1, start - 1), string.sub(line, start + 1, stop - 1))
 		until not line

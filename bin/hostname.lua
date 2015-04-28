@@ -41,7 +41,7 @@ if #args > 0 then
 	buffer.write(file, hostname)
 	buffer.close(file)
 	os.setenv("HOSTNAME", hostname)
-	os.setenv("PS1", "$HOSTNAME:$PWD# ")
+--	os.setenv("PS1", "$HOSTNAME:$PWD# ")
 else
 	local file = io.open("/etc/hostname", "r")
 	if file then
