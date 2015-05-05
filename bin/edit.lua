@@ -25,8 +25,8 @@ local readonly = options.r or fs.get(filename) == nil or fs.get(filename).isRead
 
 if not fs.exists(filename) then
 	if readonly then
-		--io.stderr:write("file system is read only")
-		buffer.write(io.stderr, "edit: " .. messages.EROFS .. "\n")
+		local msg = options.r and messages.ENOENT or messages.EROFS
+		buffer.write(io.stderr, "edit: " .. msg .. "\n")
 		return
 	end
 end

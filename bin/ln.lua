@@ -3,7 +3,7 @@ local fs = require("filesystem")
 local shell = require("shell")
 
 local dirs = shell.parse(...)
-if #dirs == 0 then
+if #dirs == 0 or #dirs > 2 then
   io.write("Usage: ln <target> [<name>]")
   return
 end
